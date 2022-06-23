@@ -1,0 +1,81 @@
+#private registry
+$ docker image pull registry:2
+$ docker container run -d -p [localport]:5000 --name [containerName] registry:2
+  => ex: docker container run -d -p 8000:5000 --name registry registry:2
+$ docker image pull alpine
+$ docker image tag alpine localhost:8000/localalpine
+$ docker image push localhost:8000/localalpine
+$ docker image pull localhost:8000/localalpine
+
+#stop and remove the registry
+$ docker container stop registry
+$ docker container rm -v registry
+
+#
+$ docker run -p [localPort]:[dockerPort] --name [containerName] [imageName]
+  => docker run -p 8080:80 --name kien-nginx nginx:latest
+$ docker run -d -p [localPort]:[dockerPort] --name [containerName] [imageName]
+$ docker container attach [containerName] : Ctrl+C return terminal and terminating container
+  => docker container attach kien-nginx
+$ docker container start [containerName] : => docker container start kien-nginx
+$ docker container attach --sig-proxy=false [containerName]: Ctrl+C return terminal not terminating container
+$ docker container exec [containerName] [cmd]: run cmd
+  => docker container exec kien-nginx cat /etc/debian_version
+$ docker container exec -i -t [containerName] /bin/bash: i=interactive, t=tty=teletypewriters
+  => docker container exec -i -t kien-nginx /bin/bash
+
+#logs
+$ docker container logs --tail 5 [containerName] : view n newest logs 
+$ docker container logs -f [containerName] : f=--follow view the logs in real time
+$ docker container logs --since 2022-05-05T15:30:00 [containerName]: view logs since st
+$ docker container logs --since 2022-05-05T15:00:00 -t [containerName]: -t=--timestamps
+
+#top
+$ docker container top [containerName] : list the processes running within the container 
+  => docker container top kien-nginx
+$ docker container stats: get info about containers
+$ docker container stats [containerName]: 
+
+#resource limits 
+$ docker container run -d --name kien-nginx --cpu-shares 512 --memory 128M -p 8080:80 nginx:latest
+$ docker container update --cpu-shares 512 --memory 128M [containerName]: update resouce limits
+  => get error requeire smaller than memoryswap
+$ docker container inspect [containerName] | grep -i memory: get memoryswap
+$ docker container update --cpu-shares 512 --memory 128M --memory-swap 256M [containerName]:
+  => set --memory-swap
+
+#
+$ for i in {1..5}; do docker container run -d --name nginx$(printf "$i") nginx; done :
+
+#stop, start, restart and kill
+$ docker container stop nginx2:
+$ docker container stop -t 60 nginx2: -t=--time => waiting 60s before sending stop-signal
+$ docker container start nginx2 nginx3:
+$ docker container kill nginx5:
+
+#Removing container
+$ docker container prune: remove exited containers
+$ docker container rm [containerName]: docker container rm nginx3
+$ docker container stop nginx3 && docker container rm nginx3:
+
+#
+$ docker container create --name kien-nginx -p 8080:80 nginx:latest : create a container but not start
+$ docker container start kien-nginx:
+
+$ docker container port [containerName]: get port info
+$ docker container diff [containerName]: list the differences
+
+#copy file from container to local
+$ docker container cp [containerName]:[containerPath] [targetName]: copy to current folder in local
+  => docker container cp nginx:/tmp/logs logs
+
+#docker network
+$ docker image pull redis:alpine
+$ docker image pull russmckendrick/moby-counter
+$ docker network create moby-counter: create network
+$ docker container run -d --name redis --network moby-counter redis:alpine: 
+$ docker container run -d --name moby-counter --network moby- counter -p 8080:80 russmckendrick/moby-counter:
+
+$ docker container stop moby-counter2 redis2
+$ docker container prune
+$ docker network prune
