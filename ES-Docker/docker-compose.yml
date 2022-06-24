@@ -147,6 +147,7 @@ services:
       retries: 120
 
   es03:
+    user: root
     depends_on:
       - es02
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
@@ -187,6 +188,7 @@ services:
       retries: 120
 
   kibana:
+    user: root
     depends_on:
       es01:
         condition: service_healthy
