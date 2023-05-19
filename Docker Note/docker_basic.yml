@@ -11,6 +11,12 @@ $ docker image pull localhost:8000/localalpine
 $ docker container stop registry
 $ docker container rm -v registry
 
+#save image to .tar.gz => load
+docker save myimage:latest | gzip > myimage_latest.tar.gz
+#docker load after docker save
+docker load < busybox.tar.gz
+#docker build for linux from m1 
+docker buildx build --platform linux/amd64 -f Dockerfile -t rice_back:01 . 
 #
 $ docker run -p [localPort]:[dockerPort] --name [containerName] [imageName]
   => docker run -p 8080:80 --name kien-nginx nginx:latest
